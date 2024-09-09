@@ -1,0 +1,10 @@
+{
+  "tables": [
+    {
+      "id": 1,
+      "status": "todo",
+      "createdAt": "2024-09-09T03:17:50.091Z",
+      "updatedAt": null
+    }
+  ]
+}

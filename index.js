@@ -3,11 +3,35 @@
 // Getting arguments from command line
 const args = process.argv.slice(2);
 
-// Do something with the arguments
+// requires
+const fs = require("fs");
+const obj = { tables : [] };
+
+const add = (description) => {
+
+    if (fs.existsSync("data.json")) {
+        const data = fs.readFileSync("data.json");
+        const tasks = JSON.parse(data);
+        obj.tables.push(tasks);
+    } 
+
+    obj.tables.push({
+        id: obj.tables.length + 1,
+        description: description,
+        status: "todo",
+        createdAt: new Date,
+        updatedAt: null
+    })
+
+    let json = JSON.stringify(obj, null, 2);
+    fs.writeFileSync('data.json', json);
+
+    console.log("Task added and saved to data.json file");
+}
 
 switch (args[0]) {
     case "add":
-        console.log("Adding task");
+        add();
         break;
     case "update":
         console.log("Removing task");
@@ -41,3 +65,5 @@ switch (args[0]) {
     default:
         console.log("Invalid command");
 }
+
+
