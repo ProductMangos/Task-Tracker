@@ -5,18 +5,17 @@ const args = process.argv.slice(2);
 
 // requires
 const fs = require("fs");
-const obj = { tables : [] };
 
 const add = (description) => {
+    let obj = { table : [] };
 
     if (fs.existsSync("data.json")) {
         const data = fs.readFileSync("data.json");
-        const tasks = JSON.parse(data);
-        obj.tables.push(tasks);
+        obj = JSON.parse(data);
     } 
 
-    obj.tables.push({
-        id: obj.tables.length + 1,
+    obj.table.push({
+        id: obj.table.length + 1,
         description: description,
         status: "todo",
         createdAt: new Date,
@@ -29,6 +28,27 @@ const add = (description) => {
     console.log("Task added and saved to data.json file");
 }
 
+const deleteItem = (id) => {
+    let obj = { table: [] };
+
+    if(fs.existsSync('data.json')) {
+        let data = fs.readFileSync('data.json');
+        obj = JSON.parse(data); 
+    } 
+
+    let findIdIndex = obj.table.findIndex((item) => item.id === id);
+
+    if(findIdIndex === -1) {
+        console.log('Task not found');
+    } else {        
+        obj.table.splice(findIdIndex, 1);
+        console.log(`Task ${id} deleted!`);
+    }
+
+    let json = JSON.stringify(obj, null, 2); 
+    fs.writeFileSync('data.json', json);
+};
+
 switch (args[0]) {
     case "add":
         add();
@@ -37,7 +57,8 @@ switch (args[0]) {
         console.log("Removing task");
         break;
     case "delete":
-        console.log("Deleting task");
+        const idToDelete = parseInt(args[1], 10);
+        deleteItem(idToDelete);
         break;
     case "list":
         const listOption = args[1];
