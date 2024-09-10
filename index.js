@@ -6,13 +6,19 @@ const args = process.argv.slice(2);
 // requires
 const fs = require("fs");
 
+const checkIfFileExists = () => {
+    if(fs.existsSync('data.json')) {
+        const data = fs.readFileSync("data.json");
+        return JSON.parse(data);
+    } else {
+        console.log('File does not exist');
+    }
+}
+
 const add = (description) => {
     let obj = { table : [] };
 
-    if (fs.existsSync("data.json")) {
-        const data = fs.readFileSync("data.json");
-        obj = JSON.parse(data);
-    } 
+    obj = checkIfFileExists();
 
     obj.table.push({
         id: obj.table.length + 1,
@@ -31,10 +37,7 @@ const add = (description) => {
 const deleteItem = (id) => {
     let obj = { table: [] };
 
-    if(fs.existsSync('data.json')) {
-        let data = fs.readFileSync('data.json');
-        obj = JSON.parse(data); 
-    } 
+    obj = checkIfFileExists();
 
     let findIdIndex = obj.table.findIndex((item) => item.id === id);
 
@@ -49,12 +52,35 @@ const deleteItem = (id) => {
     fs.writeFileSync('data.json', json);
 };
 
+const update = (id, description) => {
+    let obj = { table: [] };
+
+    obj = checkIfFileExists();
+
+    let findIdIndex = obj.table.findIndex((item) => item.id === id);
+    if(findIdIndex === -1) {
+        console.log('Task not found');
+    } else {        
+        obj.table[findIdIndex].description = description;
+        obj.table[findIdIndex].updatedAt = new Date;
+        console.log(`Task ${id} updated!`);
+    }
+}
+
+const list = () => {
+    let obj = { table: [] };
+    obj = checkIfFileExists();
+    console.log(obj.table);
+}
+
 switch (args[0]) {
     case "add":
         add();
         break;
     case "update":
-        console.log("Removing task");
+        const idToUpdate = parseInt(args[1], 10);
+        const description = args[2];
+        update(idToUpdate, description);
         break;
     case "delete":
         const idToDelete = parseInt(args[1], 10);
@@ -74,7 +100,7 @@ switch (args[0]) {
                 console.log("Listing todo tasks");
                 break;
             default:
-                console.log("Listing all tasks");
+                list();
         }
         break;
     case "mark-in-progress":
