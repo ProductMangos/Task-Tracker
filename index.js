@@ -71,8 +71,42 @@ const update = (id, description) => {
 
         let json = JSON.stringify(obj, null, 2);
         fs.writeFileSync('data.json', json);
-        
+
         console.log(`Task ${id} updated!`);
+    }
+}
+
+const markInProgress = (id) => {
+    let obj = { table: [] };
+
+    obj = checkIfFileExists();
+
+    let findIdIndex = obj.table.findIndex((item => item.id === id));
+
+    if(findIdIndex === -1) {
+        console.log('Task not found');
+    } else {
+        obj.table[findIdIndex].status = "in-progress";
+
+        let json = JSON.stringify(obj, null, 2);
+        fs.writeFileSync('data.json', json);
+    }
+}
+
+const markDone = (id) => {
+    let obj = { table: [] };
+
+    obj = checkIfFileExists();
+
+    let findIdIndex = obj.table.findIndex((item => item.id === id));
+
+    if (findIdIndex === -1) {
+        console.log("Task not found");
+    } else {
+        obj.table[findIdIndex].status = "done";
+
+        let json = JSON.stringify(obj, null, 2);
+        fs.writeFileSync('data.json', json);
     }
 }
 
@@ -116,10 +150,12 @@ switch (args[0]) {
         }
         break;
     case "mark-in-progress":
-        console.log("Marking task in progress");
+        const markInProgressId = args[1];
+        markInProgress(markInProgressId);
         break;
     case "mark-done":
-        console.log("Marking task done");
+        const markDoneId = args[1];
+        markDoneId(markDoneId);
         break;
     default:
         console.log("Invalid command");
